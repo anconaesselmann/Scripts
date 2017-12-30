@@ -1,1 +1,8 @@
+
+# temporary files
 gat_temp
+temp.html
+gat_tickets
+
+# python compiled
+*.pyc
