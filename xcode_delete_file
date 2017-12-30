@@ -1,0 +1,30 @@
+#! /usr/bin/python
+import os
+import re
+import sys
+
+project_name = os.path.basename(os.getcwd())
+project_file_dir = os.path.join(os.path.sep, os.getcwd(), project_name + ".xcodeproj", "project.pbxproj")
+file_to_delete = sys.argv[1]
+file_to_delete_basename = os.path.basename(file_to_delete)
+file_to_delete_dir = os.path.join(os.path.sep, os.getcwd(), project_name, file_to_delete)
+
+reg_exp_comma = r'\n?\t+([A-F0-9]{24})[ \/\*]+' + file_to_delete_basename + '[ 0-9a-zA-Z\*/=\{;\.<>"]*?,'
+reg_exp_brackets = r'\n?\t+([A-F0-9]{24})[ \/\*]+' + file_to_delete_basename + '[ \*\/=a-zA-Z0-9]+{[ 0-9a-zA-Z\*/=\{;\.<>"\n\t\(\),]*?(\};)'
+
+
+
+with open(project_file_dir, 'r' ) as f:
+    content = f.read()
+
+content = re.sub(reg_exp_comma, '', content, flags = re.M)
+content = re.sub(reg_exp_brackets, '', content, flags = re.M)
+
+with open(project_file_dir, "w") as f:
+    f.write(content)
+
+try:
+    os.remove(file_to_delete_dir)
+except OSError as e:
+    print("Could not delete '" + file_to_delete_dir + "'")
+

@@ -1,0 +1,20 @@
+#! /usr/bin/python
+import os
+import re
+import sys
+
+project_name = os.path.basename(os.getcwd())
+
+file_dir = sys.argv[1]
+func_cont = sys.argv[2]
+func_name = sys.argv[3]
+arg_name = sys.argv[4] if sys.argv.count > 4 else ""
+
+with open(file_dir, 'r' ) as f:
+    file_content = f.read()
+
+reg_exp = r'(func[ ]*' + func_name + '\([^\{]*' + arg_name + '[^\{]*\)[^\{]*\{\n)([\s\S]*?)(\n    \})'
+file_content = re.sub(reg_exp, '\\1' + func_cont + '\\3', file_content, flags = re.M)
+
+with open(file_dir, "w") as f:
+    f.write(file_content)

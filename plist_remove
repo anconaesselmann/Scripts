@@ -1,0 +1,23 @@
+#! /usr/bin/python
+import os
+import re
+import sys
+
+project_name = os.path.basename(os.getcwd())
+
+plist_dir = sys.argv[1]
+key_type = sys.argv[2]
+key_name = sys.argv[3]
+
+with open(plist_dir, 'r' ) as f:
+    content = f.read()
+
+if key_type == "string":
+    print("Removing string entry for '" + key_name + "'")
+    reg_exp = r'\n\t<key>' + key_name + '<\/key>[\t\na-zA-Z0-9<>]*?<\/string>'
+    content = re.sub(reg_exp, '', content, flags = re.M)
+else:
+    sys.exit("Removing type '" + key_type + "' is not supported")
+
+with open(plist_dir, "w") as f:
+    f.write(content)

@@ -1,0 +1,48 @@
+#! /usr/bin/python
+
+import os
+import sys
+import subprocess
+from shutil import copyfile
+
+# commands
+xcode_delete_file = os.path.join(os.path.sep, sys.path[0], "xcode_delete_file")
+plist_remove = os.path.join(os.path.sep, sys.path[0], "plist_remove")
+swift_replace_content_of_func = os.path.join(os.path.sep, sys.path[0], "swift_replace_content_of_func")
+generate_project_files = os.path.join(os.path.sep, sys.path[0], "generateProjectFiles.swift")
+
+# constants
+project_name = os.path.basename(os.getcwd())
+plist_dir = os.path.join(os.path.sep, os.getcwd(), project_name, "Info.plist")
+app_delegate_dir = os.path.join(os.path.sep, os.getcwd(), project_name, "AppDelegate.swift")
+
+data_dir = "xcodeinit.data"
+
+initial_view_controller_src_dir = os.path.join(os.path.sep, sys.path[0], data_dir, "InitialViewController.swift")
+app_delegate_extensions_src_dir = os.path.join(os.path.sep, sys.path[0], data_dir, "AppDelegate_Extensions.swift")
+initial_view_controller_dst_dir = os.path.join(os.path.sep, os.getcwd(), project_name, "InitialViewController.swift")
+app_delegate_extensions_dst_dir = os.path.join(os.path.sep, os.getcwd(), project_name, "AppDelegate_Extensions.swift")
+
+# remove default view controller and main storyboard
+files_to_delete = ["ViewController.swift", "Base.lproj/Main.storyboard"]
+
+for file_name in files_to_delete:
+    print("Deleting file '" + file_name + "'")
+    print subprocess.Popen(xcode_delete_file + " " + file_name, shell=True, stdout=subprocess.PIPE).stdout.read()
+
+# remove main storyboard entry from project plist
+print subprocess.Popen(plist_remove + " \"" + plist_dir + "\" string UIMainStoryboardFile", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+main_nav_controller = """        let vm = InitialViewModel()
+        let vc = InitialViewController(viewModel: vm)
+        let nc = MainNavigationController(rootViewController: vc)
+        initWindow(with: nc)
+        return true"""
+
+print subprocess.Popen(swift_replace_content_of_func + " \"" + app_delegate_dir + "\" \"" + main_nav_controller + "\" application didFinishLaunchingWithOptions", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+print subprocess.Popen(generate_project_files + " InitialViewController.swift", shell=True, stdout=subprocess.PIPE).stdout.read()
+print subprocess.Popen(generate_project_files + " AppDelegate_Extensions.swift", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+copyfile(initial_view_controller_src_dir, initial_view_controller_dst_dir)
+copyfile(app_delegate_extensions_src_dir, app_delegate_extensions_dst_dir)

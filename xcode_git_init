@@ -1,0 +1,37 @@
+#! /usr/bin/python
+
+import subprocess
+
+gitignore_content = """# Xcode
+
+## User settings
+xcuserdata/
+"""
+
+
+fo = open(".gitignore", "wb")
+fo.write(gitignore_content)
+fo.close()
+
+print subprocess.Popen("git init", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+print subprocess.Popen("git add .", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+print subprocess.Popen("git commit -m\"Initial commit\"", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+
+# import os
+
+# project_name = os.path.basename(os.getcwd())
+# user = "anconaesselmann"
+# remote_command = "git remote add origin https://github.com/" + user + "/" + project_name + ".git"
+
+# verify_command = "git remote -v"
+
+# push_command = "git push -u origin master"
+
+# print subprocess.Popen(remote_command, shell=True, stdout=subprocess.PIPE).stdout.read()
+# print subprocess.Popen(verify_command, shell=True, stdout=subprocess.PIPE).stdout.read()
+# print subprocess.Popen(push_command, shell=True, stdout=subprocess.PIPE).stdout.read()
+
+

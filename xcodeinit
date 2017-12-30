@@ -1,0 +1,23 @@
+#! /usr/bin/python
+import os
+import sys
+import subprocess
+
+project_name = os.path.basename(os.getcwd())
+
+
+cocoinit = os.path.join(os.path.sep, sys.path[0], "cocoinit")
+xcode_git_init = os.path.join(os.path.sep, sys.path[0], "xcode_git_init")
+xcode_remeve_ib = os.path.join(os.path.sep, sys.path[0], "xcode_remeve_ib")
+
+print("Installing pods")
+print subprocess.Popen(cocoinit, shell=True, stdout=subprocess.PIPE).stdout.read()
+print("Initializing git")
+print subprocess.Popen(xcode_git_init, shell=True, stdout=subprocess.PIPE).stdout.read()
+print("remove main storyboard")
+print subprocess.Popen(xcode_remeve_ib, shell=True, stdout=subprocess.PIPE).stdout.read()
+print("Creating commit for removing ib")
+print subprocess.Popen("git add .", shell=True, stdout=subprocess.PIPE).stdout.read()
+print subprocess.Popen("git commit -m\"Removed main storyboard\"", shell=True, stdout=subprocess.PIPE).stdout.read()
+print("Opening project")
+print os.popen("open " + project_name + ".xcworkspace").read()
