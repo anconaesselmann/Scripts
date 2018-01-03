@@ -1,7 +1,7 @@
 import urllib2
-# import requests
 import browsercookie
-
+import HTMLParser
+import re
 
 user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
 
@@ -13,9 +13,22 @@ def get_cookie_value(domain, name):
             return cookie.value
     return None
 
+yellow_actions = {
+    'in_progress': '21',
+    'code_review': '41',
+    'complete': '31'
+}
+
+blue_actions = {
+    'in_progress': '101',
+    'code_review': '91',
+    'complete': '31'
+}
+
 
 class Ticket:
     _page = None
+    _team_actions = None
 
     def __init__(self, url):
         cj = browsercookie.chrome()
@@ -48,18 +61,22 @@ class Ticket:
 
         return request
 
+    def get_team_actions(self):
+        branch = self.get_branch_name()
+        if branch[:4] == "YEL-":
+            return yellow_actions
+        elif branch[:4] == "BLU-":
+            return blue_actions
+
     def get_is_in_progress(self):
-        return self.get_action_string('21')
+        return self.get_action_string(self.get_team_actions()['in_progress'])
 
     def get_is_complete_request(self):
-        return self.get_action_string('31')
+        return self.get_action_string(self.get_team_actions()['complete'])
 
     def get_in_code_review_request(self):
-        return self.get_action_string('41')
+        return self.get_action_string(self.get_team_actions()['code_review'])
 
-
-import HTMLParser
-import re
 
 class IDParser(HTMLParser.HTMLParser):
     """Modified HTMLParser that isolates a tag with the specified id"""
