@@ -24,7 +24,7 @@ reviewers = ['@seanlanghivida']
 ios_path = expanduser('~/via_ios')
 ios_project_file_name = 'Via.xcworkspace'
 
-repo_url = 'https://github.com/vidahealth/via_ios'
+repo_url = git.get_remote_from_config()
 
 options = opt.read_options(options_path)
 
