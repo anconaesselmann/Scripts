@@ -12,6 +12,8 @@ data_dir = __file__ + ".data"
 user_data_dir = os.path.join(os.path.sep, data_dir, "user.json")
 
 view_controller_template_dir = os.path.join(os.path.sep, data_dir, "ViewController.swift")
+view_model_template_dir = os.path.join(os.path.sep, data_dir, "ViewModel.swift")
+view_template_dir = os.path.join(os.path.sep, data_dir, "View.swift")
 
 constant_options = {
     'author_name': 'Enter the author name: ',
@@ -35,13 +37,29 @@ replacements['vc_name'] = replacements['named'] + 'ViewController'
 replacements['vm_name'] = replacements['named'] + 'ViewModel'
 replacements['view_name'] = replacements['named'] + 'View'
 
-# Fill placeholders for view controller
-with open(view_controller_template_dir, 'r' ) as f:
-    content = f.read()
+project_name = os.path.basename(os.getcwd())
 
-# Replace all variable options in view controller
-for option_name, option_value in replacements.items():
-    reg_exp_option = r'{' + option_name + '}'
-    content = re.sub(reg_exp_option, option_value, content, flags = re.M)
+view_controller_file_name = replacements['vc_name'] + '.swift'
+view_model_file_name = replacements['vm_name'] + '.swift'
+view_file_name = replacements['view_name'] + '.swift'
 
-print(content)
+view_controller_dir = os.path.join(os.path.sep, os.getcwd(), project_name, view_controller_file_name)
+view_model_dir = os.path.join(os.path.sep, os.getcwd(), project_name, view_model_file_name)
+view_dir = os.path.join(os.path.sep, os.getcwd(), project_name, view_file_name)
+
+def replace(template_dir, target_dir):
+    with open(template_dir, 'r' ) as f:
+        contents = f.read()
+
+    for option_name, option_value in replacements.items():
+        reg_exp_option = r'{' + option_name + '}'
+        contents = re.sub(reg_exp_option, option_value, contents, flags = re.M)
+
+    fo = open(target_dir, "w")
+    fo.write(contents)
+    fo.close()
+
+
+replace(view_controller_template_dir, view_controller_dir)
+replace(view_model_template_dir, view_model_dir)
+replace(view_template_dir, view_dir)
