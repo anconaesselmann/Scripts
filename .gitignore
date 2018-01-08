@@ -3,6 +3,7 @@
 gat_temp
 temp.html
 gat_tickets
+xcc.data/user.json
 
 # python compiled
 *.pyc

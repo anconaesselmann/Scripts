@@ -1,0 +1,17 @@
+#! /usr/bin/python
+import os
+import re
+import sys
+from options.options import Options
+
+data_dir = __file__ + ".data"
+user_data_dir = os.path.join(os.path.sep, data_dir, "user.json")
+
+options = Options(user_data_dir)
+options.has('author_name', 'Enter the author name: ')
+options.has('copyright_name', 'Enter the copyright holder: ')
+
+user = options.get()
+
+print(user)
+
