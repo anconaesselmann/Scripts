@@ -10,7 +10,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 # commands
-generate_project_files = os.path.join(os.path.sep, sys.path[0], "generateProjectFiles.swift")
+generate_project_files = os.path.join(os.path.sep, sys.path[0], "xcpf")
 
 # internal directories
 data_dir = __file__ + ".data"

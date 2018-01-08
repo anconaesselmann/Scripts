@@ -9,7 +9,7 @@ from shutil import copyfile
 xcode_delete_file = os.path.join(os.path.sep, sys.path[0], "xcode_delete_file")
 plist_remove = os.path.join(os.path.sep, sys.path[0], "plist_remove")
 swift_replace_content_of_func = os.path.join(os.path.sep, sys.path[0], "swift_replace_content_of_func")
-generate_project_files = os.path.join(os.path.sep, sys.path[0], "generateProjectFiles.swift")
+generate_project_files = os.path.join(os.path.sep, sys.path[0], "xcpf")
 
 # constants
 project_name = os.path.basename(os.getcwd())
