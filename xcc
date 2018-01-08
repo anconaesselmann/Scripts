@@ -18,6 +18,7 @@ user_data_dir = os.path.join(os.path.sep, data_dir, "user.json")
 
 view_controller_template_dir = os.path.join(os.path.sep, data_dir, "ViewController.swift")
 view_model_template_dir = os.path.join(os.path.sep, data_dir, "ViewModel.swift")
+view_model_tests_template_dir =  os.path.join(os.path.sep, data_dir, "ViewModelTests.swift")
 view_template_dir = os.path.join(os.path.sep, data_dir, "View.swift")
 
 constant_options = {
@@ -34,6 +35,8 @@ for option_name, option_command_line_prompt in constant_options.items():
 
 options.has('named', 'Enter the base name: ', False)
 
+project_name = os.path.basename(os.getcwd())
+
 # Read options from file or argvs or command line (and persist to user_data_dir)
 replacements = options.get()
 replacements['date'] = str(now.month) + '/' + str(now.day) + '/' + str(now.year)
@@ -41,16 +44,20 @@ replacements['copyright_date'] = str(now.year)
 replacements['vc_name'] = replacements['named'] + 'ViewController'
 replacements['vm_name'] = replacements['named'] + 'ViewModel'
 replacements['view_name'] = replacements['named'] + 'View'
-
-project_name = os.path.basename(os.getcwd())
+replacements['project_name'] = project_name
 
 view_controller_file_name = replacements['vc_name'] + '.swift'
 view_model_file_name = replacements['vm_name'] + '.swift'
+view_model_tests_file_name = replacements['vm_name'] + 'Tests.swift'
 view_file_name = replacements['view_name'] + '.swift'
+
+tests_dir = os.path.join(os.path.sep, os.getcwd(), project_name + 'Tests')
 
 view_controller_dir = os.path.join(os.path.sep, os.getcwd(), project_name, view_controller_file_name)
 view_model_dir = os.path.join(os.path.sep, os.getcwd(), project_name, view_model_file_name)
+view_model_tests_dir = os.path.join(os.path.sep, tests_dir, view_model_tests_file_name)
 view_dir = os.path.join(os.path.sep, os.getcwd(), project_name, view_file_name)
+
 
 def replace(template_dir, target_dir):
     with open(template_dir, 'r' ) as f:
@@ -67,9 +74,11 @@ def replace(template_dir, target_dir):
 
 replace(view_controller_template_dir, view_controller_dir)
 replace(view_model_template_dir, view_model_dir)
+replace(view_model_tests_template_dir, view_model_tests_dir)
 replace(view_template_dir, view_dir)
 
 # Add new files to xcode project
 print subprocess.Popen(generate_project_files + " " + view_controller_file_name, shell=True, stdout=subprocess.PIPE).stdout.read()
 print subprocess.Popen(generate_project_files + " " + view_model_file_name, shell=True, stdout=subprocess.PIPE).stdout.read()
+print subprocess.Popen(generate_project_files + " " + view_model_tests_file_name , shell=True, stdout=subprocess.PIPE).stdout.read()
 print subprocess.Popen(generate_project_files + " " + view_file_name, shell=True, stdout=subprocess.PIPE).stdout.read()

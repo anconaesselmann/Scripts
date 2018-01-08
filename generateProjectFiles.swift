@@ -12,9 +12,9 @@ class XcodeEntry {
     let parent: String
     let id: String
     let id2: String
-    
+
     let type: EntryType
-    
+
     init(name: String, parent: String, type: EntryType = .folder) {
         self.name = name
         self.parent = parent
@@ -22,7 +22,7 @@ class XcodeEntry {
         id = XcodeEntry.generateId()
         id2 = XcodeEntry.generateId()
     }
-    
+
     private static func generateId() -> String {
         let uuid = UUID().uuidString
         let index1 = uuid.index(uuid.startIndex, offsetBy: 8)
@@ -47,26 +47,45 @@ let tempXcodeProjectUrl = path.appendingPathComponent("\(projectName).xcodeproj/
 
 let newEntry: XcodeEntry
 
+func getTargetPostfix(for fileName: String) -> String {
+    let fileNameWithoutExtension = URL(string: fileName)!.deletingPathExtension().lastPathComponent
+    let testsPostFix = "Tests"
+    let postFix = fileNameWithoutExtension.hasSuffix(testsPostFix) ? testsPostFix : ""
+    return postFix
+}
+
+var testsAdjustmentCondition = 0 // Hacky
+
 if CommandLine.arguments.count > 2 {
     let parentFolderName: String
     switch CommandLine.arguments[1] {
     case "folder":
         let folderName = CommandLine.arguments[2]
         parentFolderName = CommandLine.arguments.count > 3 ? CommandLine.arguments[3] : projectName
-        
+
         newEntry = XcodeEntry(name: folderName, parent: parentFolderName, type: .folder)
         print("Creating folder `\(folderName)` in `\(parentFolderName)`")
     default:
         let fileName = CommandLine.arguments[1]
-        parentFolderName = CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : projectName
-        
+        let postFix = getTargetPostfix(for: fileName)
+        // Hacky
+        if postFix.count > 0 {
+            testsAdjustmentCondition = 1
+        }
+        parentFolderName = CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : projectName + postFix
+
         newEntry = XcodeEntry(name: fileName, parent: parentFolderName, type: .file)
         print("Creating file `\(fileName)` in `\(parentFolderName)`")
     }
 } else if CommandLine.arguments.count == 2 {
     let fileName = CommandLine.arguments[1]
-    
-    newEntry = XcodeEntry(name: fileName, parent: projectName, type: .file)
+    let postFix = getTargetPostfix(for: fileName)
+    // Hacky
+    if postFix.count > 0 {
+        testsAdjustmentCondition = 1
+    }
+
+    newEntry = XcodeEntry(name: fileName, parent: projectName + postFix, type: .file)
     print("Creating file `\(fileName)` in `\(projectName)`")
 } else {
     print("Not enough arguments")
@@ -218,7 +237,7 @@ while let line = readLine() {
     case .pbxSourcesBuildPhase:
         if line.hasSuffix("files = (") {
             matchingConditions += 1
-        } else if matchingConditions > 0 {
+        } else if matchingConditions > testsAdjustmentCondition {
             if newEntry.type == .file {
                 if let sourceBuildPhase = getPbxSourcesBuildPhase(for: newEntry) {
                     tempXcodeProjectFileHandle.write((sourceBuildPhase).data(using: encoding)!)
