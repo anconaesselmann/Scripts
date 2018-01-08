@@ -24,7 +24,12 @@ reviewers = ['@seanlanghivida']
 ios_path = expanduser('~/via_ios')
 ios_project_file_name = 'Via.xcworkspace'
 
-git_url = git.get_remote_from_config()
+try:
+    git_url = git.get_remote_from_config()
+except ValueError as e:
+    print("Repository has no remote")
+    git_url = ""
+
 repo_url = git_url[:-4]
 
 options = opt.read_options(options_path)
