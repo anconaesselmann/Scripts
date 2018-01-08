@@ -8,13 +8,16 @@ Options gets options from a json file, command line arguments or the command lin
 class Options:
     _dir = None
     _options = None
+    _ephemeral = None
 
     def __init__(self, dir):
         self._dir = dir
         self._options = {}
+        self._ephemeral = {}
 
-    def has(self, name, prompt):
+    def has(self, name, prompt, isRetained = True):
         self._options[name] = prompt
+        self._ephemeral[name] = isRetained
 
     def get(self):
         dictionary = {}
@@ -25,7 +28,12 @@ class Options:
         dictionary = self._get_opt_from_input(dictionary)
 
         with open(self._dir, 'w') as outfile:
-            json.dump(dictionary, outfile, indent=4, sort_keys=True)
+            filtered = {}
+            for key, value in dictionary.items():
+                if not self._ephemeral[key]:
+                    continue
+                filtered[key] = value
+            json.dump(filtered, outfile, indent=4, sort_keys=True)
 
         return dictionary
 
