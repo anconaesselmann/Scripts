@@ -1,7 +1,20 @@
 import subprocess
+import os
 import re
 import browsercookie
 import urllib2
+
+
+def get_remote_from_config():
+    reg_exp = r'(\[remote "origin"\]\n\turl = )([a-zA-Z\:\/\._0-9]+)'
+    config_dir = os.path.join(os.path.sep, os.getcwd(), '.git', 'config')
+    with open(config_dir, 'r') as f:
+        content = f.read()
+
+    search = re.search(reg_exp, content, flags=re.M)
+    if search:
+        return search.group(2)
+    raise ValueError('Could not get remote repository from config file')
 
 
 def get_branches_by_commit_date():
