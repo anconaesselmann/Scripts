@@ -2,12 +2,17 @@
 import os
 import re
 import sys
+import subprocess
 from options.options import Options
 import datetime
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+# commands
+generate_project_files = os.path.join(os.path.sep, sys.path[0], "generateProjectFiles.swift")
+
+# internal directories
 data_dir = __file__ + ".data"
 user_data_dir = os.path.join(os.path.sep, data_dir, "user.json")
 
@@ -63,3 +68,8 @@ def replace(template_dir, target_dir):
 replace(view_controller_template_dir, view_controller_dir)
 replace(view_model_template_dir, view_model_dir)
 replace(view_template_dir, view_dir)
+
+# Add new files to xcode project
+print subprocess.Popen(generate_project_files + " " + view_controller_file_name, shell=True, stdout=subprocess.PIPE).stdout.read()
+print subprocess.Popen(generate_project_files + " " + view_model_file_name, shell=True, stdout=subprocess.PIPE).stdout.read()
+print subprocess.Popen(generate_project_files + " " + view_file_name, shell=True, stdout=subprocess.PIPE).stdout.read()
