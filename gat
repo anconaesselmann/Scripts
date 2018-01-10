@@ -19,7 +19,7 @@ tickets_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'gat_ti
 
 temp_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'temp.html')
 
-reviewers = ['@seanlanghivida']
+reviewers = ['@supotuco', '@bartchr808']
 
 ios_path = expanduser('~/via_ios')
 ios_project_file_name = 'Via.xcworkspace'
@@ -115,7 +115,7 @@ def _get_pr_message():
     tickets = opt.read_options(tickets_path)
     try:
         url = tickets[git.get_current_branch()]
-        out = 'Implements ' + url + '\n\n' + out
+        out = 'Implements ' + url + '\n\n' + out + '\n\n'
 
         reviewer_string = ''
         for reviewer in reviewers:
