@@ -25,6 +25,12 @@ blue_actions = {
     'complete': '31'
 }
 
+delphi_actions = {
+    'in_progress': '31',
+    'code_review': '51',
+    'complete': '41'
+}
+
 
 class Ticket:
     _page = None
@@ -67,6 +73,8 @@ class Ticket:
             return yellow_actions
         elif branch[:4] == "BLU-":
             return blue_actions
+        elif branch[:3] == "CD-":
+            return delphi_actions
 
     def get_is_in_progress(self):
         return self.get_action_string(self.get_team_actions()['in_progress'])
