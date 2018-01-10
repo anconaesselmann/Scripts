@@ -3,6 +3,7 @@ import os
 import re
 import browsercookie
 import urllib2
+import string
 
 
 def get_remote_from_config():
@@ -64,9 +65,13 @@ def get_stash_with_index(index):
 
 def pr_message():
     current_branch = get_current_branch()
-    return unicode(subprocess.check_output(
-        ['git', 'log', 'master..' + current_branch, '--pretty=- %s%n%b']
+    separator = '*COMMITMESSAGESEPARATIONTOKEN*'
+    messages_string = unicode(subprocess.check_output(
+        ['git', 'log', 'master..' + current_branch, '--pretty=- %s%n%b' + separator]
     ), "utf-8")
+    messages = list(reversed(string.split(messages_string, separator)))
+    messages = map(unicode.strip, messages)
+    return '\n'.join(messages) + '\n'
 
 
 def create_branch(name):
