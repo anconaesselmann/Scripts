@@ -1,4 +1,6 @@
 {
     "RxSwift": "4.0.0",
-    "RxCocoa": "4.0.0"
+    "RxCocoa": "4.0.0",
+    "AFDateHelper": "4.2.2",
+    "AAE": "0.1.0"
 }
